@@ -1,0 +1,43 @@
+/**
+ * 
+ */
+package cn.net.cobot.cobot_web.web;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.common.hash.BloomFilter;
+import com.google.common.hash.Funnels;
+
+/**
+ * @author DELL
+ *
+ */
+public class BloomFilterTest {
+
+	private static int size = 1000000;
+	
+	private static BloomFilter<Integer> bloomFilter = BloomFilter.create(Funnels.integerFunnel(), size);
+	
+	private static BloomFilter<Integer> bloomFilter1 = BloomFilter.create(Funnels.integerFunnel(), size, 0.0001);
+	
+	public static void main(String[] args) {
+		for(int i=0;i<size;i++) {
+			bloomFilter1.put(i);
+		}
+		
+		for(int i=0;i<size;i++) {
+			if(!bloomFilter1.mightContain(i)) {
+				System.out.println("逃脱了");
+			}
+		}
+		
+		List<Integer> list = new ArrayList<>(1000);
+		for(int i=size+10000;i<size+20000;i++) {
+			if(bloomFilter1.mightContain(i)) {
+				list.add(i);
+			}
+		}
+		System.out.println("误伤"+list.size());
+	}
+}
